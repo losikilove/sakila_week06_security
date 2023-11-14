@@ -25,6 +25,10 @@ public class AuthenticationService {
     private final JwtService jwtService;
 
     public User signup(SignUpRequest signUpRequest) {
+        if (!signUpRequest.getPassword().equals(signUpRequest.getConfirmPassword())) {
+            return null;
+        }
+
         User user = new User();
 
         user.setUsername(signUpRequest.getUsername());
