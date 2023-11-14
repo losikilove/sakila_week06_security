@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,7 +24,12 @@ public class FilmController {
     }
 
     @PostMapping("/get-all")
-    public ResponseEntity<List<Film>> getAll() {
-        return new ResponseEntity<>(filmService.getAll(), HttpStatus.OK);
+    public ResponseEntity<List<Film>> getAll(@RequestHeader("Authorization") String accessToken) {
+        List<Film> listFilms = filmService.getAll(accessToken);
+
+        if (listFilms == null) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(listFilms, HttpStatus.OK);
     }
 }

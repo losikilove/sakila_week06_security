@@ -2,6 +2,9 @@ package com.group01.server_a.services;
 
 import java.util.List;
 
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -16,12 +19,18 @@ public class FilmService {
         this.filmRepository = filmRepository;
     }
 
-    public List<Film> getAll() {
+    public List<Film> getAll(String token) {
         try {
             List<Film> listFilms = filmRepository.getAllFilms();
             String url = "http://localhost:8082/v2/api/film/get-all";
             RestTemplate restTemplate = new RestTemplate();
-            Film[] listRestFilms = restTemplate.postForObject(url, null, Film[].class);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.set("Authorization", token);
+
+            HttpEntity<Film> request = new HttpEntity<>(headers);
+
+            Film[] listRestFilms = restTemplate.postForObject(url, request, Film[].class);
 
             for (Film film : listRestFilms) {
                 listFilms.add(film);
